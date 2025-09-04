@@ -103,7 +103,7 @@ html[data-theme="light"] .topbar{background:color-mix(in oklab, var(--bg), white
 .btn.outline{background:transparent;border-color:var(--border);color:var(--text)}
 .btn.icon{display:inline-flex;gap:8px;align-items:center;justify-content:center;min-width:44px}
 .btn.small{padding:8px 10px;font-size:.9rem}
-.btn.danger{background:transparent;border-color:var(--danger);color:#fecaca}
+.btn.danger{background:transparent;border-color:var(--danger);color:#f01414}
 .full{width:100%}
 
 .badge{
@@ -114,7 +114,7 @@ html[data-theme="light"] .topbar{background:color-mix(in oklab, var(--bg), white
 
 .muted{color:var(--muted)}
 .error{color:#fecaca;background:#7f1d1d;padding:10px 12px;border-radius:8px;border:1px solid var(--danger)}
-html[data-theme="light"] .error{color:#7f1d1d;background:#fee2e2;border-color:#fecaca}
+html[data-theme="light"] .error{color:#7f1d1d;background:#fee2e2;border-color:#f01414}
 
 /* Indicador "no carrinho" */
 .in-cart-badge{
@@ -206,7 +206,7 @@ html[data-theme="light"] .error{color:#7f1d1d;background:#fee2e2;border-color:#f
   display:flex;flex-direction:column;gap:8px;align-items:stretch;
 }
 .cart-item .controls .counter{align-self:stretch;justify-content:space-between}
-.remove{color:#fecaca;border:1px solid var(--danger);background:transparent;border-radius:8px;padding:8px 10px;cursor:pointer}
+.remove{color:#f01414;border:1px solid var(--danger);background:transparent;border-radius:8px;padding:8px 10px;cursor:pointer}
 
 .cart-footer{padding:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:10px;background:color-mix(in oklab, var(--card), black 4%)}
 .counts{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:.95rem}
