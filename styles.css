@@ -132,7 +132,7 @@ input:focus, select:focus{border-color:var(--accent);outline-color:color-mix(in 
 }
 .product-item img{width:64px;height:64px;border-radius:8px;object-fit:cover}
 .product-item .info .name{font-weight:800}
-.product-item .desc-link{color:var(--text);text-decoration:underline dotted}
+.product-item .desc-link{color:var(--accent);text-decoration:underline}
 .product-item .desc-link:hover{text-decoration:underline}
 
 /* Coluna direita da lista (preço, total, qty, botão) */
