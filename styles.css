@@ -63,6 +63,17 @@ html[data-theme="light"] .topbar{background:color-mix(in oklab, var(--bg), white
 }
 .actions{display:flex;gap:8px;align-items:center}
 
+/* Categoria no cabeçalho */
+.category{
+  display:flex;align-items:center;gap:8px;
+}
+#categorySelect{
+  min-width:240px;
+  padding:10px 12px;border:1px solid var(--border);
+  background:color-mix(in oklab, var(--card), black 8%);color:var(--text);border-radius:10px;
+}
+
+/* Botões */
 .btn{
   appearance:none;border:1px solid transparent;border-radius:10px;padding:10px 14px;
   font-weight:600;color:color-mix(in oklab, var(--text), black 30%);background:color-mix(in oklab, var(--card), white 40%);cursor:pointer;
@@ -75,6 +86,7 @@ html[data-theme="light"] .topbar{background:color-mix(in oklab, var(--bg), white
 .btn.outline{background:transparent;border-color:var(--border);color:var(--text)}
 .btn.icon{display:inline-flex;gap:8px;align-items:center;justify-content:center;min-width:44px}
 .btn.small{padding:8px 10px;font-size:.9rem}
+.btn.danger{background:transparent;border-color:var(--danger);color:#fecaca}
 .full{width:100%}
 
 .badge{
@@ -86,6 +98,15 @@ html[data-theme="light"] .topbar{background:color-mix(in oklab, var(--bg), white
 .muted{color:var(--muted)}
 .error{color:#fecaca;background:#7f1d1d;padding:10px 12px;border-radius:8px;border:1px solid var(--danger)}
 html[data-theme="light"] .error{color:#7f1d1d;background:#fee2e2;border-color:#fecaca}
+
+/* Indicador "no carrinho" */
+.in-cart-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 10px;border-radius:999px;font-weight:700;font-size:.8rem;
+  color:var(--text);
+  background:color-mix(in oklab, var(--primary), transparent 82%);
+  border:1px solid color-mix(in oklab, var(--primary-600), transparent 50%);
+}
 
 /* Login */
 .login-card{max-width:420px;margin:8vh auto}
@@ -99,13 +120,6 @@ input, select{
 input:focus, select:focus{border-color:var(--accent);outline-color:color-mix(in oklab, var(--accent), transparent 65%)}
 .password-field{display:flex;gap:8px;align-items:stretch}
 .password-field input{flex:1}
-
-/* Filtros */
-.filters{
-  display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0 12px;
-}
-.filters label{font-weight:600}
-#categorySelect{min-width:260px}
 
 /* Lista */
 .product-list{
@@ -195,7 +209,6 @@ input:focus, select:focus{border-color:var(--accent);outline-color:color-mix(in 
 /*      Quebras de layout    */
 /* ========================= */
 
-/* Tablets e telas médias */
 @media (max-width: 1024px){
   .product-item{grid-template-columns:56px 1fr 220px}
   .cart{width:420px;max-width:92vw}
@@ -204,13 +217,11 @@ input:focus, select:focus{border-color:var(--accent);outline-color:color-mix(in 
 /* Smartphones */
 @media (max-width: 768px){
   .topbar{flex-wrap:wrap;row-gap:8px}
-  .brand{font-size:1rem}
+  .brand{font-size:2rem}
   .actions{order:2}
-  .search{order:3;flex-basis:100%;max-width:none}
+  .category{order:3;flex-basis:100%}
+  .search{order:4;flex-basis:100%;max-width:none}
   .search input{width:100%}
-
-  .filters{gap:8px}
-  #categorySelect{min-width:unset;flex:1}
 
   .product-item{
     grid-template-columns:56px 1fr;
@@ -226,7 +237,7 @@ input:focus, select:focus{border-color:var(--accent);outline-color:color-mix(in 
   .cart{width:100vw;max-width:100vw}
   .cart-header{position:sticky;top:0;background:inherit;z-index:1}
   .cart-footer{position:sticky;bottom:0;background:inherit;z-index:1;padding-bottom:calc(12px + env(safe-area-inset-bottom))}
-  .cart-items{padding-bottom:140px}
+  .cart-items{padding-bottom:160px}
 }
 
 /* Telas muito pequenas */
