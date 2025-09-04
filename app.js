@@ -167,14 +167,17 @@ function toggleCart(show) {
   aside.setAttribute('aria-hidden', String(!show));
   overlay.setAttribute('aria-hidden', String(!show));
 }
+
 function updateCartBadge() {
   const { countEl } = getCartEls();
   const totalCount = [...cart.values()].reduce((a, b) => a + b, 0);
   if (countEl) countEl.textContent = String(totalCount);
 }
+
 function renderCart() {
   const { itemsEl, totalEl } = getCartEls();
   if (!itemsEl || !totalEl) return;
+
   itemsEl.innerHTML = '';
   if (cart.size === 0) {
     itemsEl.innerHTML = `<div class="card" style="margin:8px">Seu carrinho está vazio.</div>`;
@@ -182,12 +185,14 @@ function renderCart() {
     updateCartBadge();
     return;
   }
+
   let total = 0;
   cart.forEach((qty, id) => {
     const p = PRODUCTS.find(x => x.id === id);
     if (!p) return;
     const lineTotal = p.preco * qty;
     total += lineTotal;
+
     const row = document.createElement('div');
     row.className = 'cart-item';
     row.innerHTML = `
@@ -206,15 +211,19 @@ function renderCart() {
         <button class="remove">Remover</button>
       </div>
     `;
+
     $('.dec', row).addEventListener('click', () => changeQty(id, -1));
     $('.inc', row).addEventListener('click', () => changeQty(id, +1));
     $('.qty-input', row).addEventListener('change', (e) => setQty(id, parseInt(e.target.value || '1', 10)));
     $('.remove', row).addEventListener('click', () => removeFromCart(id));
+
     itemsEl.appendChild(row);
   });
+
   totalEl.textContent = fmtBRL.format(total);
   updateCartBadge();
 }
+
 function addToCart(id, qty = 1) {
   const current = cart.get(id) || 0;
   cart.set(id, current + Math.max(1, qty | 0));
@@ -222,6 +231,7 @@ function addToCart(id, qty = 1) {
   renderCart();
   emitCartChanged(id, 'add');
 }
+
 function setQty(id, qty) {
   const q = Math.max(1, qty | 0);
   cart.set(id, q);
@@ -229,6 +239,7 @@ function setQty(id, qty) {
   renderCart();
   emitCartChanged(id, 'set');
 }
+
 function changeQty(id, delta) {
   const current = cart.get(id) || 1;
   const next = Math.max(1, current + delta);
@@ -237,12 +248,14 @@ function changeQty(id, delta) {
   renderCart();
   emitCartChanged(id, 'change');
 }
+
 function removeFromCart(id) {
   cart.delete(id);
   saveCart(cart);
   renderCart();
   emitCartChanged(id, 'remove');
 }
+
 function clearCart() {
   if (cart.size === 0) {
     alert('Seu carrinho já está vazio.');
@@ -253,36 +266,173 @@ function clearCart() {
   cart.clear();
   saveCart(cart);
   renderCart();
+  emitCartChanged(null, 'clear');
 }
-function finalizeOrder() {
-  if (cart.size === 0) {
-    alert('Seu carrinho está vazio.');
-    return;
-  }
-  const lines = [];
+
+// ===== PDF (jsPDF dinâmico + salvar com showSaveFilePicker quando possível) =====
+async function ensureJsPDF() {
+  if (window.jspdf?.jsPDF) return window.jspdf.jsPDF;
+  await new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js';
+    s.onload = resolve;
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+  return window.jspdf.jsPDF;
+}
+
+function buildOrderData() {
+  const items = [];
   let total = 0;
   cart.forEach((qty, id) => {
     const p = PRODUCTS.find(x => x.id === id);
     if (!p) return;
-    const lt = p.preco * qty;
-    total += lt;
-    lines.push(`• ${p.nome} (x${qty}) = ${fmtBRL.format(lt)}`);
+    const lineTotal = p.preco * qty;
+    total += lineTotal;
+    items.push({
+      id, nome: p.nome, referencia: p.referencia, categoria: p.categoria,
+      preco: p.preco, qty, total: lineTotal
+    });
   });
-  alert(['Pedido finalizado com sucesso! 🎉', '', 'Itens:', ...lines, '', `Total: ${fmtBRL.format(total)}`].join('\n'));
+  const now = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  const num = `PED-${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+  return {
+    numero: num,
+    data: now.toLocaleString('pt-BR'),
+    cliente: sessionStorage.getItem('clientName') || 'Cliente',
+    itens: items,
+    total
+  };
+}
+
+async function saveOrderAsPDF(order) {
+  const jsPDF = await ensureJsPDF();
+  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+  const margin = 40;
+  let y = margin;
+
+  // Cabeçalho
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(16);
+  doc.text('Resumo do Pedido', margin, y);
+  y += 22;
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(11);
+  doc.text(`Pedido: ${order.numero}`, margin, y);
+  y += 16;
+  doc.text(`Data: ${order.data}`, margin, y);
+  y += 16;
+  doc.text(`Cliente: ${order.cliente}`, margin, y);
+  y += 22;
+
+  // Colunas
+  const colNomeW = pageW - margin*2 - 210; // espaço para qty, unit, total
+  const addLine = (h = 14) => {
+    if (y + h > pageH - margin) {
+      doc.addPage();
+      y = margin;
+    }
+  };
+
+  doc.setFont('helvetica', 'bold');
+  doc.text('Item', margin, y);
+  doc.text('Qtd', margin + colNomeW + 10, y);
+  doc.text('Unit.', margin + colNomeW + 50, y);
+  doc.text('Total', margin + colNomeW + 110, y);
+  y += 12;
+  doc.setLineWidth(0.5);
+  doc.line(margin, y, pageW - margin, y);
+  y += 12;
+
+  doc.setFont('helvetica', 'normal');
+  order.itens.forEach(it => {
+    addLine(14);
+    // Nome com quebra
+    const nomeLines = doc.splitTextToSize(`${it.nome} (Ref: ${it.referencia})`, colNomeW);
+    nomeLines.forEach((line, idx) => {
+      addLine(14);
+      doc.text(line, margin, y);
+      if (idx === 0) {
+        // Primeira linha: desenhar os números ao lado
+        doc.text(String(it.qty), margin + colNomeW + 10, y);
+        doc.text(fmtBRL.format(it.preco), margin + colNomeW + 50, y);
+        doc.text(fmtBRL.format(it.total), margin + colNomeW + 110, y);
+      }
+      y += 14;
+    });
+    y += 4;
+  });
+
+  // Total
+  addLine(24);
+  doc.setLineWidth(0.5);
+  doc.line(margin, y, pageW - margin, y);
+  y += 18;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(13);
+  doc.text(`Total do Pedido: ${fmtBRL.format(order.total)}`, margin, y);
+
+  // Salvar: pergunta aonde salvar quando suportado
+  const filename = `pedido-${order.numero}.pdf`;
+  if (window.showSaveFilePicker) {
+    const handle = await window.showSaveFilePicker({
+      suggestedName: filename,
+      types: [{ description: 'Arquivo PDF', accept: { 'application/pdf': ['.pdf'] } }]
+    });
+    const writable = await handle.createWritable();
+    // Gravar ArrayBuffer do PDF
+    const pdfArrayBuffer = doc.output('arraybuffer');
+    await writable.write(pdfArrayBuffer);
+    await writable.close();
+  } else {
+    // Fallback: download padrão do navegador
+    doc.save(filename);
+  }
+}
+
+// ===== Finalização do pedido (gera PDF e então limpa carrinho) =====
+async function finalizeOrder() {
+  if (cart.size === 0) {
+    alert('Seu carrinho está vazio.');
+    return;
+  }
+  try {
+    const order = buildOrderData();
+    await saveOrderAsPDF(order);
+    alert('PDF do pedido gerado com sucesso.');
+  } catch (e) {
+    console.error(e);
+    alert('Não foi possível gerar o PDF do pedido. Tente novamente.');
+    return; // não limpar carrinho se falhar gerar PDF
+  }
+  // Limpa o carrinho após gerar o PDF
   cart.clear();
   saveCart(cart);
   renderCart();
+  emitCartChanged(null, 'clear');
   toggleCart(false);
 }
+
 function bindCartUI() {
   const { openBtn, closeBtn, exitBtn, finalizeBtn, clearBtn } = getCartEls();
   if (openBtn) openBtn.addEventListener('click', () => toggleCart(true));
   if (closeBtn) closeBtn.addEventListener('click', () => toggleCart(false));
-  if (exitBtn) exitCartBtn.addEventListener('click', () => toggleCart(false));
+  if (exitBtn) exitBtn.addEventListener('click', () => toggleCart(false));
   const overlay = byId('overlay');
   if (overlay) overlay.addEventListener('click', () => toggleCart(false));
-  if (finalizeBtn) finalizeBtn.addEventListener('click', finalizeOrder);
-  if (clearBtn) clearBtn.addEventListener('click', clearCart);
+  if (finalizeBtn) finalizeBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    finalizeOrder();
+  });
+  if (clearBtn) clearBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    clearCart();
+  });
 }
 
 // ===== Login (index.html) =====
@@ -292,9 +442,11 @@ function bindLogin() {
   const passwordEl = byId('password');
   const togglePasswordBtn = byId('togglePassword');
   const loginError = byId('loginError');
+
   if (!loginForm) return;
   usernameEl.value = AUTH_USER;
   passwordEl.value = AUTH_PASS;
+
   loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const u = usernameEl.value.trim();
@@ -308,6 +460,7 @@ function bindLogin() {
       setTimeout(() => setHidden(loginError, true), 3000);
     }
   });
+
   if (togglePasswordBtn) {
     togglePasswordBtn.addEventListener('click', () => {
       const isPwd = passwordEl.type === 'password';
@@ -318,14 +471,16 @@ function bindLogin() {
   }
 }
 
-// ===== Catálogo (home.html) =====
+// ===== Home (home.html) =====
 function bindCatalog() {
   const listEl = byId('productsList');
   const emptyMsg = byId('emptyMsg');
   const searchForm = byId('searchForm');
   const searchInput = byId('searchInput');
   const categorySelect = byId('categorySelect');
+
   if (!listEl) return;
+
   const renderList = () => {
     const term = (searchInput?.value || '').toLowerCase().trim();
     const cat = categorySelect ? categorySelect.value : 'Todos';
@@ -338,12 +493,14 @@ function bindCatalog() {
         p.referencia.toLowerCase().includes(term);
       return matchesCat && matchesTerm;
     });
+
     listEl.innerHTML = '';
     if (filtered.length === 0) {
       setHidden(emptyMsg, false);
       return;
     }
     setHidden(emptyMsg, true);
+
     filtered.forEach(p => {
       const li = document.createElement('li');
       li.className = 'product-item';
@@ -365,6 +522,7 @@ function bindCatalog() {
           <button class="btn primary add" type="button">Adicionar</button>
         </div>
       `;
+
       const qtyInput = $('.qty-input', li);
       const decBtn = $('.dec', li);
       const incBtn = $('.inc', li);
@@ -372,6 +530,7 @@ function bindCatalog() {
       const lineTotalEl = $('.line-total', li);
       const badge = $('.in-cart-badge', li);
       const unit = p.preco;
+
       const updateLineTotal = () => {
         const q = Math.max(1, parseInt(qtyInput.value || '1', 10));
         lineTotalEl.textContent = `Total: ${fmtBRL.format(unit * q)}`;
@@ -379,6 +538,7 @@ function bindCatalog() {
       const updateBadge = () => {
         if (badge) badge.classList.toggle('hidden', !isInCart(p.id));
       };
+
       decBtn.addEventListener('click', () => {
         qtyInput.value = Math.max(1, (parseInt(qtyInput.value || '1', 10) - 1));
         updateLineTotal();
@@ -389,6 +549,7 @@ function bindCatalog() {
       });
       qtyInput.addEventListener('input', updateLineTotal);
       qtyInput.addEventListener('change', updateLineTotal);
+
       addBtn.addEventListener('click', () => {
         const qty = Math.max(1, parseInt(qtyInput.value || '1', 10));
         addToCart(p.id, qty);
@@ -406,15 +567,18 @@ function bindCatalog() {
           updateBadge();
         }
       });
+
       window.addEventListener('cart-changed', (ev) => {
         if (!ev.detail) return;
-        if (ev.detail.id === p.id || ['remove','change','set','add'].includes(ev.detail.action)) {
+        if (ev.detail.id === p.id || ['remove','change','set','add','clear'].includes(ev.detail.action)) {
           updateBadge();
         }
       });
+
       listEl.appendChild(li);
     });
   };
+
   if (searchForm) {
     searchForm.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -423,6 +587,7 @@ function bindCatalog() {
   }
   if (searchInput) searchInput.addEventListener('input', renderList);
   if (categorySelect) categorySelect.addEventListener('change', renderList);
+
   renderList();
 }
 
@@ -431,6 +596,7 @@ function bindDetail() {
   const detailWrap = byId('productDetail');
   const notFound = byId('notFound');
   if (!detailWrap) return;
+
   const params = new URLSearchParams(location.search);
   const id = params.get('id');
   const p = PRODUCTS.find(x => x.id === id);
@@ -441,6 +607,7 @@ function bindDetail() {
   }
   setHidden(notFound, true);
   setHidden(detailWrap, false);
+
   detailWrap.innerHTML = `
     <div class="pd-media">
       <img src="${p.imagem}" alt="${p.nome}">
@@ -467,9 +634,11 @@ function bindDetail() {
       </div>
     </div>
   `;
+
   const qtyDetail = byId('qtyDetail');
   const pdTotal = byId('pdTotal');
   const pdBadge = byId('pdBadge');
+
   const updateDetailTotal = () => {
     const q = Math.max(1, parseInt(qtyDetail.value || '1', 10));
     pdTotal.textContent = `Total: ${fmtBRL.format(p.preco * q)}`;
@@ -477,18 +646,21 @@ function bindDetail() {
   const updateBadge = () => {
     if (pdBadge) pdBadge.classList.toggle('hidden', !isInCart(p.id));
   };
+
   byId('decDetail').addEventListener('click', () => { qtyDetail.value = Math.max(1, (parseInt(qtyDetail.value || '1', 10) - 1)); updateDetailTotal(); });
   byId('incDetail').addEventListener('click', () => { qtyDetail.value = Math.max(1, (parseInt(qtyDetail.value || '1', 10) + 1)); updateDetailTotal(); });
   qtyDetail.addEventListener('input', updateDetailTotal);
   qtyDetail.addEventListener('change', updateDetailTotal);
+
   byId('addDetailBtn').addEventListener('click', () => {
     const qty = Math.max(1, parseInt(qtyDetail.value || '1', 10));
     addToCart(p.id, qty);
     updateBadge();
   });
+
   window.addEventListener('cart-changed', (ev) => {
     if (!ev.detail) return;
-    if (ev.detail.id === p.id || ['remove','change','set','add'].includes(ev.detail.action)) {
+    if (ev.detail.id === p.id || ['remove','change','set','add','clear'].includes(ev.detail.action)) {
       updateBadge();
     }
   });
@@ -503,8 +675,9 @@ document.addEventListener('DOMContentLoaded', () => {
   redirectIfNeeded(page);
 
   if (page === 'login') {
-    bindLogin(); // Fix: ligar o formulário de login para redirecionar para home.html
+    bindLogin();
   }
+
   if (page === 'home') {
     const logoutBtn = byId('logoutBtn');
     if (logoutBtn) logoutBtn.addEventListener('click', () => {
@@ -512,10 +685,12 @@ document.addEventListener('DOMContentLoaded', () => {
       sessionStorage.removeItem('clientName');
       location.href = 'index.html';
     });
+
     bindCatalog();
     bindCartUI();
     renderCart();
   }
+
   if (page === 'produto') {
     const logoutBtn = byId('logoutBtn');
     if (logoutBtn) logoutBtn.addEventListener('click', () => {
@@ -523,6 +698,7 @@ document.addEventListener('DOMContentLoaded', () => {
       sessionStorage.removeItem('clientName');
       location.href = 'index.html';
     });
+
     bindDetail();
     bindCartUI();
     renderCart();
