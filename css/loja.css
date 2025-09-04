@@ -1,0 +1,85 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+.container {
+    background: #fff;
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px #ccc;
+}
+.field {
+    margin-bottom: 15px;
+}
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+input, select, button {
+    padding: 8px;
+    width: 100%;
+    box-sizing: border-box;
+}
+button {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+button.logout-btn, #sair-btn {
+    background: #dc3545;
+}
+.error {
+    color: #dc3545;
+    margin-bottom: 10px;
+}
+.produtos-lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+.produto-card {
+    background: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    width: 200px;
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 0 5px #eee;
+}
+.produto-card img {
+    max-width: 120px;
+    max-height: 120px;
+    margin-bottom: 10px;
+}
+.produto-card .preco {
+    color: #007bff;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+.produto-card .marca, .produto-card .categoria {
+    font-size: 0.9em;
+    color: #555;
+}
+#carrinho-tabela {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+}
+#carrinho-tabela th, #carrinho-tabela td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+#carrinho-total {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 15px;
+}

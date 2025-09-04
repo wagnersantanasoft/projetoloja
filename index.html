@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <title>Loja Online - Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="login">
+    <header class="topbar">
+      <a class="brand" href="index.html">Loja Online</a>
+      <div class="spacer"></div>
+      <nav class="actions">
+        <button id="themeToggle" class="btn outline" aria-label="Alternar tema">🌓</button>
+      </nav>
+    </header>
+
+    <main class="container">
+      <section class="login-card card">
+        <h2 style="margin:0 0 8px">Acesso do Cliente</h2>
+        <p class="muted" style="margin-top:0">Use usuário: <strong>cliente</strong> e senha: <strong>1234</strong></p>
+        <form id="loginForm" class="form">
+          <label>
+            Usuário
+            <input id="username" name="username" type="text" placeholder="cliente" autocomplete="username" required />
+          </label>
+          <label>
+            Senha
+            <div class="password-field">
+              <input id="password" name="password" type="password" placeholder="1234" autocomplete="current-password" required />
+              <button type="button" id="togglePassword" class="btn small">Mostrar</button>
+            </div>
+          </label>
+          <button type="submit" class="btn primary full">Entrar</button>
+          <p id="loginError" class="error hidden" role="alert">Usuário ou senha inválidos.</p>
+        </form>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

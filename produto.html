@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <title>Detalhes do Produto - Loja Online</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="produto">
+    <header class="topbar">
+      <a class="btn outline" href="home.html">← Voltar</a>
+      <h1 class="page-title">Detalhes do Produto</h1>
+      <nav class="actions">
+        <button id="themeToggle" class="btn outline" aria-label="Alternar tema">🌓</button>
+        <button id="openCartBtn" class="btn icon" aria-label="Abrir carrinho">
+          🛒 <span id="cartCount" class="badge">0</span>
+        </button>
+        <button id="logoutBtn" class="btn outline">Sair</button>
+      </nav>
+    </header>
+
+    <main class="container">
+      <section id="productDetail" class="product-detail card"></section>
+      <p id="notFound" class="error hidden">Produto não encontrado. <a class="link" href="home.html">Voltar ao catálogo</a>.</p>
+    </main>
+
+    <div id="overlay" class="overlay hidden" aria-hidden="true"></div>
+    <aside id="cartAside" class="cart" aria-hidden="true" aria-label="Carrinho de compras">
+      <header class="cart-header">
+        <h2>Seu Carrinho</h2>
+        <button id="closeCartBtn" class="btn icon" title="Sair do carrinho" aria-label="Sair do carrinho">✕</button>
+      </header>
+      <section id="cartItems" class="cart-items"></section>
+      <footer class="cart-footer">
+        <div class="totals">
+          <span>Total:</span>
+          <strong id="cartTotal">R$ 0,00</strong>
+        </div>
+        <div class="cart-actions">
+          <button id="finalizeBtn" class="btn primary full">Finalizar Pedido</button>
+          <button id="exitCartBtn" class="btn outline full">Sair do Carrinho</button>
+        </div>
+      </footer>
+    </aside>
+
+    <script src="app.js"></script>
+  </body>
+</html>
