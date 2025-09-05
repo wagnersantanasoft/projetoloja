@@ -23,7 +23,7 @@ html[data-theme="light"]{
   --primary-600:#15803d;
   --border:#e5e7eb;
   --danger:#b91c1c;
-  --accent:#38bdf8;
+  --accent:#2563eb;
   --shadow:0 8px 24px rgba(0,0,0,.08);
 }
 
@@ -58,7 +58,7 @@ input:focus, select:focus{border-color:var(--accent);outline-color:color-mix(in 
 /* Topbar com auto-hide ao rolar */
 .topbar{
   position:sticky;top:0;z-index:10;
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
   padding:12px 16px;border-bottom:1px solid var(--border);
   background:color-mix(in oklab, var(--bg), black 5%);backdrop-filter:saturate(1.2) blur(8px);
   transition:transform .2s ease;
@@ -70,24 +70,33 @@ html[data-theme="light"] .topbar{background:color-mix(in oklab, var(--bg), white
 
 .container{max-width:1100px;margin:0 auto;padding:18px}
 
+/* Busca centralizada */
 .search{
-  display:flex;gap:8px;flex:1;max-width:560px;justify-content:center
+  display:flex;gap:8px;justify-content:center;
+  order:2;flex-basis:100%;
+  max-width:720px;margin:6px auto 0;
 }
+
 .search input{
-  flex:1;min-width:160px;
+  position: fixed; /* ou absolute se preferir */
+  top: 30%; left: 50%;
+  width: 100%; max-width:720px;
+  transform: translate(-50%, -50%);
   padding:10px 12px;border:1px solid var(--border);
   background:color-mix(in oklab, var(--card), black 8%);color:var(--text);border-radius:10px;
 }
 .actions{display:flex;gap:8px;align-items:center}
 
-/* Categoria no cabeçalho */
-.category{
-  display:flex;align-items:center;gap:8px;
+/* Barra de categorias em botões (abaixo da busca) */
+.categories{
+  order:3;flex-basis:100%;
+  display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:6px;
 }
-#categorySelect{
-  min-width:240px;
-  padding:10px 12px;border:1px solid var(--border);
-  background:color-mix(in oklab, var(--card), black 8%);color:var(--text);border-radius:10px;
+.cat-btn{border-color:color-mix(in oklab, var(--accent), transparent 60%)}
+.cat-btn.active{
+  color:var(--text);
+  background:color-mix(in oklab, var(--accent), transparent 88%);
+  border-color:color-mix(in oklab, var(--accent), transparent 30%);
 }
 
 /* Botões */
@@ -125,7 +134,7 @@ html[data-theme="light"] .error{color:#7f1d1d;background:#fee2e2;border-color:#f
   border:1px solid color-mix(in oklab, var(--primary-600), transparent 50%);
 }
 
-/* Lista */
+/* Lista (home) */
 .product-list{
   list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:10px;
 }
@@ -137,14 +146,15 @@ html[data-theme="light"] .error{color:#7f1d1d;background:#fee2e2;border-color:#f
 .product-item img{width:64px;height:64px;border-radius:8px;object-fit:cover}
 .product-item .info .name{font-weight:800}
 .product-item .desc-link{color:var(--accent);text-decoration:underline}
+.product-item .desc-link:hover{text-decoration:underline}
 
-/* Coluna direita da lista (preço, total, qty, botão) */
+/* Coluna direita da lista */
 .list-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
 .list-right .price{font-weight:900}
 .list-right .line-total{font-weight:700}
 .list-right .add{min-width:150px}
 
-/* Agrupa stepper + botão (usado na responsividade) */
+/* Agrupa stepper + botão */
 .inline-actions{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
 
 /* Stepper de quantidade */
@@ -153,22 +163,6 @@ html[data-theme="light"] .error{color:#7f1d1d;background:#fee2e2;border-color:#f
 }
 .counter button{background:transparent;color:var(--text);border:0;padding:6px 10px;cursor:pointer}
 .counter input{width:56px;text-align:center;border:0;background:transparent;color:var(--text);padding:6px 4px}
-
-/* Tabela de produtos (home-tabela) */
-.table-card{overflow:auto}
-.product-table-wrap{min-width:720px}
-.product-table{width:100%;border-collapse:collapse}
-.product-table thead th{
-  text-align:left;font-weight:800;color:var(--text);
-  background:color-mix(in oklab, var(--card), black 6%);
-  border-bottom:1px solid var(--border);
-}
-.product-table th, .product-table td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
-.media-cell img{width:56px;height:56px;border-radius:8px;object-fit:cover}
-.nowrap{white-space:nowrap}
-.table-actions{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
-.table-actions .add{min-width:150px}
-.table-actions .in-cart-badge{align-self:flex-end}
 
 /* Detalhe */
 .product-detail{
@@ -216,7 +210,7 @@ html[data-theme="light"] .error{color:#7f1d1d;background:#fee2e2;border-color:#f
 .cart-item .title{font-size:.95rem}
 .cart-item .line{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:.85rem}
 
-/* Controles do carrinho em coluna, com "Remover" abaixo do stepper */
+/* Controles do carrinho */
 .cart-item .controls{
   display:flex;flex-direction:column;gap:8px;align-items:stretch;
 }
@@ -230,6 +224,50 @@ html[data-theme="light"] .error{color:#7f1d1d;background:#fee2e2;border-color:#f
 .cart-actions{display:flex;flex-direction:column;gap:8px}
 
 /* ========================= */
+/*     Tabela (home-tabela)  */
+/* ========================= */
+
+.table-card{overflow:auto}
+.product-table-wrap{min-width:720px}
+.product-table{
+  width:100%;
+  border-collapse:collapse;
+  table-layout:auto;
+}
+.product-table thead th{
+  text-align:left;font-weight:800;color:var(--text);
+  background:color-mix(in oklab, var(--card), black 6%);
+  border-bottom:1px solid var(--border);
+}
+.product-table th,
+.product-table td{
+  padding:10px 12px;
+  border-bottom:1px solid var(--border);
+  vertical-align:middle;
+}
+.product-table th:first-child,
+.product-table td:first-child{ /* coluna da imagem */
+  width:72px;
+}
+.product-table th:last-child,
+.product-table td:last-child{ /* coluna ações */
+  width:200px;
+}
+
+/* Imagem pequena e fixa (override forte para evitar ficar gigante) */
+.product-table td.media-cell > img{
+  width:56px !important;
+  height:56px !important;
+  border-radius:8px;
+  object-fit:cover;
+  display:block;
+}
+.nowrap{white-space:nowrap}
+.table-actions{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.table-actions .add{min-width:150px}
+.table-actions .in-cart-badge{align-self:flex-end}
+
+/* ========================= */
 /*      Quebras de layout    */
 /* ========================= */
 
@@ -238,13 +276,11 @@ html[data-theme="light"] .error{color:#7f1d1d;background:#fee2e2;border-color:#f
   .cart{width:420px;max-width:92vw}
 }
 
-/* Smartphones */
 @media (max-width: 768px){
-  .topbar{flex-wrap:wrap;row-gap:8px}
   .brand{font-size:2rem}
-  .actions{order:2}
-  .category{order:3;flex-basis:100%}
-  .search{order:4;flex-basis:100%;max-width:none}
+  .actions{order:1}
+  .categories{order:3}
+  .search{order:2;flex-basis:100%;max-width:none}
   .search input{width:100%}
 
   .product-item{
@@ -256,7 +292,6 @@ html[data-theme="light"] .error{color:#7f1d1d;background:#fee2e2;border-color:#f
     align-items:stretch;
     width:100%;
   }
-  /* Stepper + botão lado a lado no mobile */
   .inline-actions{flex-direction:row;align-items:center}
   .inline-actions .counter{flex:1}
   .inline-actions .add{flex:1}
@@ -267,11 +302,9 @@ html[data-theme="light"] .error{color:#7f1d1d;background:#fee2e2;border-color:#f
   .cart-footer{position:sticky;bottom:0;background:inherit;z-index:1;padding-bottom:calc(12px + env(safe-area-inset-bottom))}
   .cart-items{padding-bottom:160px}
 
-  /* Botão ao lado do stepper na página de detalhe */
   .pd-actions{flex-wrap:nowrap}
 }
 
-/* Telas muito pequenas */
 @media (max-width: 480px){
   .container{padding:14px}
   .btn{padding:12px 14px;font-size:1rem}
@@ -288,7 +321,6 @@ html[data-theme="light"] .error{color:#7f1d1d;background:#fee2e2;border-color:#f
   .counter button{padding:10px;min-width:40px}
   .counter input{width:56px;padding:10px 6px}
 
-  /* mantém o botão ao lado no detalhe também */
   .pd-actions{flex-direction:row;align-items:stretch}
   .pd-actions .counter{flex:1}
   .pd-actions .btn{flex:1}
@@ -297,4 +329,7 @@ html[data-theme="light"] .error{color:#7f1d1d;background:#fee2e2;border-color:#f
   .cart-item .controls{grid-column:1/-1;flex-direction:row;align-items:center;gap:10px}
   .cart-item .controls .counter{flex:1}
   .remove{width:120px;text-align:center}
+
+  /* imagem ainda menor no mobile estreito */
+  .product-table td.media-cell > img{width:44px !important;height:44px !important}
 }

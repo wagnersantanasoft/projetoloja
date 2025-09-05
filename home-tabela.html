@@ -15,17 +15,14 @@
         <button class="btn" type="submit">Buscar</button>
       </form>
 
-      <!-- Categoria no cabeçalho -->
-      <div class="category" aria-label="Filtro por categoria">
-        <label for="categorySelect" class="muted">Categoria</label>
-        <select id="categorySelect" aria-label="Selecionar categoria">
-          <option value="Todos">Todos</option>
-          <option value="Ferramentas e Equipamentos">Ferramentas e Equipamentos</option>
-          <option value="Hidráulica">Hidráulica</option>
-          <option value="Elétrica">Elétrica</option>
-          <option value="Acabamento">Acabamento</option>
-          <option value="Louças e Metais">Louças e Metais</option>
-        </select>
+      <!-- Botões de categorias abaixo da busca -->
+      <div id="categoriesBar" class="categories" aria-label="Filtro por categoria" role="toolbar">
+        <button type="button" class="btn outline cat-btn active" data-category="Todos" aria-pressed="true">Todos</button>
+        <button type="button" class="btn outline cat-btn" data-category="Ferramentas e Equipamentos" aria-pressed="false">Ferramentas e Equipamentos</button>
+        <button type="button" class="btn outline cat-btn" data-category="Hidráulica" aria-pressed="false">Hidráulica</button>
+        <button type="button" class="btn outline cat-btn" data-category="Elétrica" aria-pressed="false">Elétrica</button>
+        <button type="button" class="btn outline cat-btn" data-category="Acabamento" aria-pressed="false">Acabamento</button>
+        <button type="button" class="btn outline cat-btn" data-category="Louças e Metais" aria-pressed="false">Louças e Metais</button>
       </div>
 
       <nav class="actions">
