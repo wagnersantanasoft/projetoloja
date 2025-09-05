@@ -2,13 +2,13 @@
 <html lang="pt-BR" data-theme="dark">
   <head>
     <meta charset="utf-8" />
-    <title>Loja Online - Home</title>
+    <title>Loja Online - Home (Tabela)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body data-page="home">
+  <body data-page="home-tabela">
     <header class="topbar">
-      <a class="brand" href="home.html">KB Store</a>
+      <a class="brand" href="home-tabela.html">KB Store</a>
 
       <form id="searchForm" class="search" role="search">
         <input id="searchInput" type="search" placeholder="Buscar produtos..." aria-label="Buscar produtos" />
@@ -29,7 +29,7 @@
       </div>
 
       <nav class="actions">
-        <a href="home-tabela.html" class="btn outline" id="viewToggleBtn" aria-label="Alternar para visualização em tabela">Tabela</a>
+        <a href="home.html" class="btn outline" id="viewToggleBtn" aria-label="Alternar para visualização em lista">Lista</a>
         <button id="themeToggle" class="btn outline" aria-label="Alternar tema">🌓</button>
         <button id="openCartBtn" class="btn icon" aria-label="Abrir carrinho">
           🛒 <span id="cartCount" class="badge">0</span>
@@ -39,7 +39,23 @@
     </header>
 
     <main class="container">
-      <ul id="productsList" class="product-list" aria-live="polite"></ul>
+      <div class="card table-card">
+        <div class="product-table-wrap">
+          <table class="product-table" aria-live="polite">
+            <thead>
+              <tr>
+                <th class="nowrap">Imagem</th>
+                <th>Produto</th>
+                <th class="nowrap">Preço</th>
+                <th class="nowrap">Qtd</th>
+                <th class="nowrap">Total</th>
+                <th class="nowrap">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="productsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
       <p id="emptyMsg" class="muted hidden">Nenhum produto encontrado para o filtro atual.</p>
     </main>
 

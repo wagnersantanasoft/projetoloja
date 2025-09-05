@@ -66,10 +66,12 @@ function isLoggedIn() {
   return sessionStorage.getItem('loggedIn') === '1';
 }
 function redirectIfNeeded(page) {
+  // Se já está logado e acessou login, redireciona conforme dispositivo
   if (page === 'login' && isLoggedIn()) {
-    location.href = 'home.html';
+    location.href = isMobileLike() ? 'home.html' : 'home-tabela.html';
   }
-  if ((page === 'home' || page === 'produto') && !isLoggedIn()) {
+  // Protege páginas internas
+  if ((page === 'home' || page === 'home-tabela' || page === 'produto') && !isLoggedIn()) {
     location.href = 'index.html';
   }
 }
@@ -88,7 +90,7 @@ const PRODUCTS = [
     { id: 'F-1014', nome: 'Chave Allen 6mm', categoria: 'Ferramentas e Equipamentos', preco: 7.9, descricao: 'Chave allen em aço temperado.', marca: 'Gedore', referencia: 'GD-CA6', imagem: 'https://picsum.photos/seed/allen/800/500' },
     { id: 'H-2004', nome: 'Válvula de Esfera 1/2"', categoria: 'Hidráulica', preco: 19.9, descricao: 'Válvula de esfera para água.', marca: 'Tigre', referencia: 'TG-VE12', imagem: 'https://picsum.photos/seed/valvula/800/500' },
     { id: 'H-2005', nome: 'Joelho 90º PVC 25mm', categoria: 'Hidráulica', preco: 2.5, descricao: 'Joelho para conexões hidráulicas.', marca: 'Amanco', referencia: 'AM-J90', imagem: 'https://picsum.photos/seed/joelho/800/500' },
-    { id: 'H-2006', nome: 'Caixa d\'Água 500L', categoria: 'Hidráulica', preco: 399.0, descricao: 'Caixa d\'água em polietileno.', marca: 'Fortlev', referencia: 'FL-CA500', imagem: 'https://picsum.photos/seed/caixaagua/800/500' },
+    { id: 'H-2006', nome: "Caixa d'Água 500L", categoria: 'Hidráulica', preco: 399.0, descricao: "Caixa d'água em polietileno.", marca: 'Fortlev', referencia: 'FL-CA500', imagem: 'https://picsum.photos/seed/caixaagua/800/500' },
     { id: 'H-2007', nome: 'Sifão Flexível', categoria: 'Hidráulica', preco: 14.9, descricao: 'Sifão flexível para pia.', marca: 'Docol', referencia: 'DC-SF', imagem: 'https://picsum.photos/seed/sifao/800/500' },
     { id: 'H-2008', nome: 'Tubo Soldável 3m', categoria: 'Hidráulica', preco: 11.9, descricao: 'Tubo soldável para água fria.', marca: 'Tigre', referencia: 'TG-TS3', imagem: 'https://picsum.photos/seed/tubo/800/500' },
     { id: 'H-2009', nome: 'Adaptador Rosca 1"', categoria: 'Hidráulica', preco: 3.9, descricao: 'Adaptador para conexões hidráulicas.', marca: 'Amanco', referencia: 'AM-AR1', imagem: 'https://picsum.photos/seed/adaptador/800/500' },
@@ -567,7 +569,8 @@ function bindLogin() {
     if (u === AUTH_USER && p === AUTH_PASS) {
       sessionStorage.setItem('loggedIn', '1');
       sessionStorage.setItem('clientName', u);
-      location.href = 'home.html';
+      // Redireciona conforme dispositivo
+      location.href = isMobileLike() ? 'home.html' : 'home-tabela.html';
     } else {
       setHidden(loginError, false);
       setTimeout(() => setHidden(loginError, true), 3000);
@@ -584,7 +587,7 @@ function bindLogin() {
   }
 }
 
-// ===== Home (home.html) =====
+// ===== Home (home.html - lista) =====
 function bindCatalog() {
   const listEl = byId('productsList');
   const emptyMsg = byId('emptyMsg');
@@ -706,6 +709,130 @@ function bindCatalog() {
   renderList();
 }
 
+// ===== Home Tabela (home-tabela.html) =====
+function bindCatalogTable() {
+  const tbody = byId('productsTableBody');
+  const emptyMsg = byId('emptyMsg');
+  const searchForm = byId('searchForm');
+  const searchInput = byId('searchInput');
+  const categorySelect = byId('categorySelect');
+
+  if (!tbody) return;
+
+  const renderTable = () => {
+    const term = (searchInput?.value || '').toLowerCase().trim();
+    const cat = categorySelect ? categorySelect.value : 'Todos';
+    const filtered = PRODUCTS.filter(p => {
+      const matchesCat = (cat === 'Todos') || (p.categoria === cat);
+      const matchesTerm = term === '' ||
+        p.nome.toLowerCase().includes(term) ||
+        p.descricao.toLowerCase().includes(term) ||
+        p.marca.toLowerCase().includes(term) ||
+        p.referencia.toLowerCase().includes(term);
+      return matchesCat && matchesTerm;
+    });
+
+    tbody.innerHTML = '';
+    if (filtered.length === 0) {
+      setHidden(emptyMsg, false);
+      return;
+    }
+    setHidden(emptyMsg, true);
+
+    filtered.forEach(p => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="media-cell"><img src="${p.imagem}" alt="${p.nome}" loading="lazy"></td>
+        <td>
+          <div class="name" style="font-weight:800">${p.nome}</div>
+          <a class="desc-link" href="produto.html?id=${encodeURIComponent(p.id)}" title="Ver detalhes">${p.descricao}</a>
+          <div class="muted" style="font-size:.85rem;margin-top:4px">${p.categoria} • Ref: ${p.referencia}</div>
+        </td>
+        <td class="nowrap price">${fmtBRL.format(p.preco)}</td>
+        <td class="nowrap">
+          <div class="counter">
+            <button class="dec" aria-label="Diminuir">−</button>
+            <input class="qty-input" type="number" min="1" step="1" value="1" aria-label="Quantidade para ${p.nome}">
+            <button class="inc" aria-label="Aumentar">+</button>
+          </div>
+        </td>
+        <td class="nowrap line-total">Total: ${fmtBRL.format(p.preco)}</td>
+        <td class="nowrap">
+          <div class="table-actions">
+            <span class="in-cart-badge ${isInCart(p.id) ? '' : 'hidden'}" aria-live="polite" aria-label="No carrinho">✓ No carrinho</span>
+            <button class="btn primary add" type="button">Adicionar</button>
+          </div>
+        </td>
+      `;
+
+      const qtyInput = $('.qty-input', tr);
+      const decBtn = $('.dec', tr);
+      const incBtn = $('.inc', tr);
+      const addBtn = $('.add', tr);
+      const lineTotalEl = $('.line-total', tr);
+      const badge = $('.in-cart-badge', tr);
+      const unit = p.preco;
+
+      const updateLineTotal = () => {
+        const q = Math.max(1, parseInt(qtyInput.value || '1', 10));
+        lineTotalEl.textContent = `Total: ${fmtBRL.format(unit * q)}`;
+      };
+      const updateBadge = () => {
+        if (badge) badge.classList.toggle('hidden', !isInCart(p.id));
+      };
+
+      decBtn.addEventListener('click', () => {
+        qtyInput.value = Math.max(1, (parseInt(qtyInput.value || '1', 10) - 1));
+        updateLineTotal();
+      });
+      incBtn.addEventListener('click', () => {
+        qtyInput.value = Math.max(1, (parseInt(qtyInput.value || '1', 10) + 1));
+        updateLineTotal();
+      });
+      qtyInput.addEventListener('input', updateLineTotal);
+      qtyInput.addEventListener('change', updateLineTotal);
+
+      addBtn.addEventListener('click', () => {
+        const qty = Math.max(1, parseInt(qtyInput.value || '1', 10));
+        addToCart(p.id, qty);
+        qtyInput.value = 1;
+        updateLineTotal();
+        updateBadge();
+      });
+      qtyInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const qty = Math.max(1, parseInt(qtyInput.value || '1', 10));
+          addToCart(p.id, qty);
+          qtyInput.value = 1;
+          updateLineTotal();
+          updateBadge();
+        }
+      });
+
+      window.addEventListener('cart-changed', (ev) => {
+        if (!ev.detail) return;
+        if (ev.detail.id === p.id || ['remove','change','set','add','clear'].includes(ev.detail.action)) {
+          updateBadge();
+        }
+      });
+
+      tbody.appendChild(tr);
+    });
+  };
+
+  if (searchForm) {
+    searchForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      renderTable();
+    });
+  }
+  if (searchInput) searchInput.addEventListener('input', renderTable);
+  if (categorySelect) categorySelect.addEventListener('change', renderTable);
+
+  renderTable();
+}
+
 // ===== Detalhe (produto.html) =====
 function bindDetail() {
   const detailWrap = byId('productDetail');
@@ -794,7 +921,7 @@ document.addEventListener('DOMContentLoaded', () => {
     bindLogin();
   }
 
-  if (page === 'home') {
+  if (page === 'home' || page === 'home-tabela') {
     const logoutBtn = byId('logoutBtn');
     if (logoutBtn) logoutBtn.addEventListener('click', () => {
       sessionStorage.removeItem('loggedIn');
@@ -802,7 +929,11 @@ document.addEventListener('DOMContentLoaded', () => {
       location.href = 'index.html';
     });
 
-    bindCatalog();
+    if (page === 'home') {
+      bindCatalog();
+    } else {
+      bindCatalogTable();
+    }
     bindCartUI();
     renderCart();
   }
