@@ -1,17 +1,8 @@
-/* =========================================================
-   STYLES.CSS (versão consolidada)
-   - Tema dark/light
-   - Login
-   - Layout topo (grid só em home / home-tabela)
-   - Busca central sem botão
-   - Categorias como botões
-   - Catálogo (lista e tabela)
-   - Produto (detalhe)
-   - Carrinho
-   - Responsividade
-   ========================================================= */
+/* ===============================
+   STYLES CSS COMPLETO
+   =============================== */
 
-/* ------------------ Variáveis de Tema ------------------ */
+/* ---------- Variáveis ---------- */
 :root{
   --bg:#0f172a;
   --card:#111827;
@@ -40,26 +31,22 @@ html[data-theme="light"]{
   --shadow:0 8px 24px rgba(0,0,0,.08);
 }
 
-/* ------------------ Reset básico ------------------ */
+/* ---------- Base ---------- */
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
   margin:0;
   font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica,Arial;
   color:var(--text);
-  background:linear-gradient(180deg,
-    color-mix(in oklab,var(--bg),black 5%),
-    var(--bg) 35%,
-    color-mix(in oklab,var(--bg),black 5%) 100%);
-  -webkit-font-smoothing:antialiased;
+  background:linear-gradient(180deg,color-mix(in oklab,var(--bg),black 5%),var(--bg) 35%,color-mix(in oklab,var(--bg),black 5%) 100%);
+  overflow-y:scroll;
+  padding-top:var(--header-offset,0px);
 }
-
 .hidden{display:none !important}
 .link{color:var(--accent);text-decoration:underline}
 .link:hover{text-decoration:underline}
-.spacer{flex:1}
 
-/* ------------------ Componentes comuns ------------------ */
+/* ---------- Botões ---------- */
 .btn{
   appearance:none;
   border:1px solid var(--border);
@@ -70,44 +57,27 @@ body{
   padding:10px 14px;
   cursor:pointer;
   font-size:.9rem;
-  transition:
-    background .25s,
-    color .25s,
-    border-color .25s,
-    filter .25s,
-    transform .08s;
+  transition:background .25s,color .25s,border-color .25s,filter .25s,transform .08s;
 }
 .btn:hover{filter:brightness(1.05)}
 .btn:active{transform:translateY(1px)}
-.btn.primary{
-  background:linear-gradient(180deg,var(--primary),var(--primary-600));
-  border-color:transparent;
-  color:#fff;
-}
-.btn.outline{
-  background:transparent;
-  color:var(--text);
-}
-.btn.danger{
-  background:transparent;
-  border-color:var(--danger);
-  color:#f01414;
-}
-.btn.icon{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:44px}
-.btn.small{padding:8px 10px;font-size:.75rem}
+.btn.primary{background:linear-gradient(180deg,var(--primary),var(--primary-600));color:#fff;border-color:transparent}
+.btn.outline{background:transparent;color:var(--text)}
+.btn.danger{background:transparent;border-color:var(--danger);color:#f01414}
+.btn.icon{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:44px}
+.btn.small{padding:8px 10px;font-size:.7rem}
 .full{width:100%}
 
+/* Badge */
 .badge{
   display:inline-grid;place-items:center;
-  min-width:20px;height:20px;
-  padding:0 6px;
+  min-width:20px;height:20px;padding:0 6px;
   border-radius:999px;
-  background:#ef4444;
-  color:#fff;
-  font-size:.7rem;
-  font-weight:600;
+  background:#ef4444;color:#fff;
+  font-size:.65rem;font-weight:600;
 }
 
+/* ---------- Texto util ---------- */
 .muted{color:var(--muted)}
 .error{
   color:#fecaca;
@@ -123,46 +93,34 @@ html[data-theme="light"] .error{
   border-color:#f01414;
 }
 
-.in-cart-badge{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:4px 10px;
-  border-radius:999px;
-  font-weight:700;
-  font-size:.7rem;
-  background:color-mix(in oklab,var(--primary),transparent 82%);
-  border:1px solid color-mix(in oklab,var(--primary-600),transparent 50%);
-  color:var(--text);
-}
-
-/* ------------------ Topbar básica ------------------ */
+/* ---------- Topbar ---------- */
 .topbar{
-  position:sticky;top:0;z-index:10;
-  display:flex;align-items:center;justify-content:space-between;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
   gap:12px;
   padding:12px 16px;
   background:color-mix(in oklab,var(--bg),black 5%);
   border-bottom:1px solid var(--border);
   backdrop-filter:saturate(1.2) blur(8px);
-  transition:transform .25s ease;
+  z-index:50;
 }
-.topbar.is-hidden{transform:translateY(-100%)}
-html[data-theme="light"] .topbar{
-  background:color-mix(in oklab,var(--bg),white 10%);
+html[data-theme="light"] .topbar{background:color-mix(in oklab,var(--bg),white 10%)}
+.topbar.fixed{
+  position:fixed;
+  top:0;left:0;right:0;
 }
-
 .brand{
   font-weight:800;
-  text-decoration:none;
-  color:var(--text);
   font-size:1.35rem;
   letter-spacing:.5px;
+  text-decoration:none;
+  color:var(--text);
   white-space:nowrap;
 }
-
-.page-title{margin:0;font-size:1.1rem}
 .actions{display:flex;gap:8px;align-items:center}
 
-/* Grid especial só nas páginas de catálogo (centraliza busca) */
+/* Grid para páginas de catálogo */
 body[data-page="home"] .topbar,
 body[data-page="home-tabela"] .topbar{
   display:grid;
@@ -171,14 +129,13 @@ body[data-page="home-tabela"] .topbar{
   row-gap:8px;
 }
 
-/* ------------------ Busca central ------------------ */
+/* ---------- Busca central ---------- */
 .search{
   grid-column:2;
   display:flex;
   width:100%;
   max-width:680px;
   margin:0 auto;
-  position:relative;
 }
 .search input{
   width:100%;
@@ -197,7 +154,7 @@ body[data-page="home-tabela"] .topbar{
   box-shadow:0 0 0 4px color-mix(in oklab,var(--accent),transparent 75%);
 }
 
-/* ------------------ Botões de categorias ------------------ */
+/* ---------- Categorias (botões) ---------- */
 .categories{
   grid-column:1 / -1;
   display:flex;
@@ -209,10 +166,11 @@ body[data-page="home-tabela"] .topbar{
 .cat-btn{
   border:1px solid color-mix(in oklab,var(--accent),transparent 65%);
   background:color-mix(in oklab,var(--card),black 4%);
-  font-size:.7rem;
-  letter-spacing:.3px;
+  font-size:.65rem;
+  letter-spacing:.4px;
   text-transform:uppercase;
   font-weight:600;
+  padding:6px 12px;
 }
 .cat-btn.active{
   background:color-mix(in oklab,var(--accent),transparent 82%);
@@ -220,27 +178,44 @@ body[data-page="home-tabela"] .topbar{
   color:var(--text);
 }
 
-/* ------------------ Container principal ------------------ */
+/* ---------- Indicador carrinho ---------- */
+.in-cart-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 10px;
+  border-radius:999px;
+  font-weight:700;
+  font-size:.65rem;
+  background:color-mix(in oklab,var(--primary),transparent 82%);
+  border:1px solid color-mix(in oklab,var(--primary-600),transparent 50%);
+  color:var(--text);
+}
+
+/* ---------- Container principal ---------- */
 .container{
   max-width:1100px;
   margin:0 auto;
   padding:18px;
 }
 
-/* ------------------ Login ------------------ */
-.login-card{
-  max-width:420px;
-  margin:8vh auto;
-}
-.form{display:flex;flex-direction:column;gap:14px}
-label{
+/* ---------- Login extra layout ---------- */
+.login-container{
+  min-height:calc(100dvh - var(--header-offset,0px));
   display:flex;
-  flex-direction:column;
-  gap:6px;
-  font-size:.95rem;
-  font-weight:500;
-  letter-spacing:.2px;
+  align-items:center;
+  justify-content:center;
+  padding:32px 18px 48px;
 }
+.login-card{
+  width:100%;
+  max-width:420px;
+  background:radial-gradient(800px 300px at -10% -20%, color-mix(in oklab,var(--accent),transparent 92%)), var(--card);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:28px 28px 32px;
+  box-shadow:var(--shadow);
+}
+.form{display:flex;flex-direction:column;gap:16px}
+label{display:flex;flex-direction:column;gap:6px;font-size:.95rem;font-weight:500;letter-spacing:.2px}
 input,select{
   padding:12px 14px;
   border:1px solid var(--border);
@@ -259,7 +234,7 @@ input:focus,select:focus{
 .password-field{display:flex;gap:8px;align-items:stretch}
 .password-field input{flex:1}
 
-/* ------------------ Lista de produtos ------------------ */
+/* ---------- Lista de produtos ---------- */
 .product-list{
   list-style:none;
   margin:16px 0 0;
@@ -281,18 +256,10 @@ input:focus,select:focus{
 }
 .product-item img{
   width:64px;height:64px;
-  border-radius:8px;
-  object-fit:cover;
+  border-radius:8px;object-fit:cover;
 }
-.product-item .info .name{
-  font-weight:800;
-  font-size:.95rem;
-}
-.product-item .desc-link{
-  color:var(--accent);
-  text-decoration:underline;
-  font-size:.75rem;
-}
+.product-item .info .name{font-weight:800;font-size:.95rem}
+.product-item .desc-link{color:var(--accent);text-decoration:underline;font-size:.75rem}
 .product-item .desc-link:hover{text-decoration:underline}
 
 .list-right{
@@ -301,18 +268,12 @@ input:focus,select:focus{
   align-items:flex-end;
   gap:8px;
 }
-.list-right .price{font-weight:900;font-size:.95rem}
-.list-right .line-total{font-weight:600;font-size:.75rem}
+.list-right .price{font-weight:900;font-size:.9rem}
+.list-right .line-total{font-weight:600;font-size:.7rem}
 .list-right .add{min-width:140px}
+.inline-actions{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
 
-.inline-actions{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  align-items:flex-end;
-}
-
-/* ------------------ Stepper de quantidade ------------------ */
+/* Stepper */
 .counter{
   display:inline-flex;
   align-items:center;
@@ -326,7 +287,7 @@ input:focus,select:focus{
   color:var(--text);
   border:0;
   padding:6px 10px;
-  font-size:.9rem;
+  font-size:.85rem;
   cursor:pointer;
 }
 .counter input{
@@ -336,23 +297,20 @@ input:focus,select:focus{
   background:transparent;
   color:var(--text);
   padding:6px 4px;
-  font-size:.85rem;
+  font-size:.8rem;
 }
 
-/* ------------------ Tabela (home-tabela) ------------------ */
+/* ---------- Tabela ---------- */
 .table-card{overflow:auto;margin-top:18px}
 .product-table-wrap{min-width:720px}
-.product-table{
-  width:100%;
-  border-collapse:collapse;
-}
+.product-table{width:100%;border-collapse:collapse}
 .product-table thead th{
   text-align:left;
   font-weight:800;
   color:var(--text);
   background:color-mix(in oklab,var(--card),black 6%);
   border-bottom:1px solid var(--border);
-  font-size:.75rem;
+  font-size:.7rem;
   letter-spacing:.5px;
   padding:10px 12px;
 }
@@ -360,26 +318,17 @@ input:focus,select:focus{
   padding:10px 12px;
   border-bottom:1px solid var(--border);
   vertical-align:middle;
-  font-size:.7rem;
+  font-size:.68rem;
 }
 .product-table td.media-cell img{
-  width:56px;
-  height:56px;
-  object-fit:cover;
-  border-radius:8px;
-  display:block;
+  width:56px;height:56px;object-fit:cover;border-radius:8px;display:block;
 }
 .nowrap{white-space:nowrap}
-.table-actions{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  align-items:flex-end;
-}
-.table-actions .add{min-width:140px;font-size:.7rem}
+.table-actions{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.table-actions .add{min-width:120px;font-size:.65rem;padding:8px 10px}
 .table-actions .in-cart-badge{align-self:flex-end}
 
-/* ------------------ Cartão genérico ------------------ */
+/* ---------- Card genérico ---------- */
 .card{
   background:radial-gradient(1200px 400px at -10% -10%, color-mix(in oklab,var(--accent),transparent 92%)), var(--card);
   border:1px solid var(--border);
@@ -388,15 +337,13 @@ input:focus,select:focus{
   box-shadow:var(--shadow);
 }
 
-/* ------------------ Página de detalhe ------------------ */
+/* ---------- Detalhe ---------- */
 .product-detail{
   display:grid;
   grid-template-columns:minmax(240px,420px) 1fr;
   gap:18px;
 }
-@media (max-width:800px){
-  .product-detail{grid-template-columns:1fr}
-}
+@media (max-width:800px){.product-detail{grid-template-columns:1fr}}
 .pd-media{
   aspect-ratio:16/10;
   background:color-mix(in oklab,var(--card),black 8%);
@@ -409,9 +356,9 @@ input:focus,select:focus{
   display:grid;
   grid-template-columns:repeat(2,1fr);
   gap:8px;
-  font-size:.8rem;
+  font-size:.75rem;
   color:var(--muted);
-  margin-top:12px;
+  margin-top:10px;
 }
 .pd-meta div{
   background:color-mix(in oklab,var(--card),black 8%);
@@ -419,25 +366,11 @@ input:focus,select:focus{
   padding:6px 8px;
   border-radius:8px;
 }
-.pd-price{
-  font-size:1.25rem;
-  font-weight:900;
-  margin:8px 0 4px;
-}
-.pd-total{
-  font-weight:800;
-  min-width:160px;
-  font-size:.85rem;
-}
-.pd-actions{
-  display:flex;
-  gap:10px;
-  align-items:center;
-  margin-top:12px;
-  flex-wrap:wrap;
-}
+.pd-price{font-size:1.2rem;font-weight:900;margin:8px 0 4px}
+.pd-total{font-weight:800;min-width:160px;font-size:.8rem}
+.pd-actions{display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap}
 
-/* ------------------ Carrinho (overlay lateral) ------------------ */
+/* ---------- Carrinho ---------- */
 .overlay{
   position:fixed;inset:0;
   background:rgba(0,0,0,.5);
@@ -445,10 +378,9 @@ input:focus,select:focus{
   opacity:0;
   pointer-events:none;
   transition:opacity .25s;
-  z-index:20;
+  z-index:40;
 }
 .overlay.show{opacity:1;pointer-events:auto}
-
 .cart{
   position:fixed;
   top:0;right:0;
@@ -459,12 +391,11 @@ input:focus,select:focus{
   border-left:1px solid var(--border);
   transform:translateX(100%);
   transition:transform .25s ease-out;
-  z-index:30;
+  z-index:60;
   display:flex;
   flex-direction:column;
 }
 .cart.show{transform:translateX(0)}
-
 .cart-header{
   display:flex;
   align-items:center;
@@ -491,35 +422,24 @@ input:focus,select:focus{
   padding:8px;
 }
 .cart-item img{
-  width:56px;height:56px;
-  border-radius:8px;
-  object-fit:cover;
+  width:56px;height:56px;border-radius:8px;object-fit:cover;
 }
 .cart-item .info{display:flex;flex-direction:column;gap:2px}
-.cart-item .title{font-size:.8rem;font-weight:600}
+.cart-item .title{font-size:.75rem;font-weight:600}
 .cart-item .line{
-  display:flex;
-  justify-content:space-between;
-  gap:8px;
-  color:var(--muted);
-  font-size:.65rem;
+  display:flex;justify-content:space-between;gap:8px;
+  color:var(--muted);font-size:.6rem;
 }
-
-.cart-item .controls{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  align-items:stretch;
-}
+.cart-item .controls{display:flex;flex-direction:column;gap:8px;align-items:stretch}
 .cart-item .controls .counter{justify-content:space-between}
 .remove{
   color:#f01414;
   border:1px solid var(--danger);
   background:transparent;
   border-radius:8px;
-  padding:8px 10px;
+  padding:6px 8px;
   cursor:pointer;
-  font-size:.65rem;
+  font-size:.6rem;
 }
 
 .cart-footer{
@@ -535,7 +455,7 @@ input:focus,select:focus{
   gap:8px;
   align-items:center;
   color:var(--muted);
-  font-size:.7rem;
+  font-size:.65rem;
   font-weight:500;
 }
 .counts .sep{opacity:.6}
@@ -543,100 +463,84 @@ input:focus,select:focus{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  font-size:.9rem;
+  font-size:.85rem;
   font-weight:600;
 }
-.cart-actions{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
+.cart-actions{display:flex;flex-direction:column;gap:8px}
+
+/* ---------- Botão de alternância (ícone) ---------- */
+.view-toggle{
+  font-size:1.05rem;
+  min-width:44px;
+  aspect-ratio:1/1;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px;
+  font-weight:700;
 }
 
-/* ------------------ Responsividade ------------------ */
+/* ---------- Responsividade ---------- */
 @media (max-width:1024px){
   .product-item{grid-template-columns:56px 1fr 220px}
   .cart{width:420px;max-width:92vw}
 }
 
 @media (max-width:768px){
-  /* Topbar vira uma coluna nas páginas de catálogo */
   body[data-page="home"] .topbar,
   body[data-page="home-tabela"] .topbar{
     grid-template-columns:1fr;
   }
-  .brand{justify-self:center;font-size:2rem}
+  .topbar{padding:8px 12px}
+  .brand{justify-self:center;font-size:1.5rem}
   .actions{justify-self:center;flex-wrap:wrap}
-  .search{grid-column:1;max-width:100%;width:100%}
-  .categories{margin-top:0}
+  .search{grid-column:1;width:100%;max-width:100%}
+  .search input{padding:10px 14px;font-size:.9rem;border-radius:34px}
 
-  .product-item{
-    grid-template-columns:56px 1fr;
-    align-items:flex-start;
-  }
-  .product-item .list-right{
-    grid-column:1 / -1;
-    align-items:stretch;
-    width:100%;
-  }
-  .inline-actions{flex-direction:row;align-items:center}
+  .btn{padding:8px 10px;font-size:.7rem;border-radius:8px}
+  .btn.icon,.view-toggle{padding:8px;min-width:40px;font-size:1rem}
+  .badge{min-width:16px;height:16px;font-size:.55rem}
+  .categories{gap:6px}
+  .cat-btn{padding:6px 10px;font-size:.55rem}
+
+  .product-item{grid-template-columns:54px 1fr;gap:10px}
+  .product-item img{width:54px;height:54px}
+  .product-item .list-right{align-items:stretch}
+  .inline-actions{flex-direction:row}
   .inline-actions .counter{flex:1}
-  .inline-actions .add{flex:1}
+  .inline-actions .add{flex:1;min-width:auto}
+
+  .counter button{padding:6px 8px;font-size:.7rem}
+  .counter input{width:48px;font-size:.65rem;padding:4px}
+
+  .product-table td.media-cell img{width:48px !important;height:48px !important}
+
+  .in-cart-badge{padding:3px 8px;font-size:.5rem}
 
   .cart{width:100vw;max-width:100vw}
   .cart-header{position:sticky;top:0;background:inherit;z-index:1}
   .cart-footer{position:sticky;bottom:0;background:inherit;z-index:1;padding-bottom:calc(12px + env(safe-area-inset-bottom))}
   .cart-items{padding-bottom:160px}
-
-  .table-actions{align-items:stretch}
-  .product-table-wrap{min-width:640px}
 }
 
-@media (max-width:480px){
-  .container{padding:14px}
-  .btn{padding:12px 14px;font-size:.95rem}
-  .btn.icon{min-width:40px}
-  .badge{min-width:18px;height:18px;font-size:.6rem}
-
-  .product-item{grid-template-columns:1fr}
-  .product-item img{width:72px;height:72px}
-  .product-item .info{
-    display:grid;
-    grid-template-columns:72px 1fr;
-    gap:12px;
-  }
-  .product-item .info .name{grid-column:1/-1}
-  .product-item .desc-link{grid-column:1/-1;font-size:.7rem}
-
-  .product-item .list-right{text-align:right}
-  .counter button{padding:10px;min-width:40px}
-  .counter input{width:56px;padding:10px 6px}
-
-  .pd-actions{flex-direction:row;align-items:stretch}
-  .pd-actions .counter{flex:1}
-  .pd-actions .btn{flex:1}
-
-  .cart-item{grid-template-columns:56px 1fr}
-  .cart-item .controls{
-    grid-column:1/-1;
-    flex-direction:row;
-    align-items:center;
-    gap:10px;
-  }
-  .cart-item .controls .counter{flex:1}
-  .remove{width:110px;text-align:center}
-
-  .product-table td.media-cell img{width:48px;height:48px}
-  .search input{padding:12px 16px;font-size:.95rem}
+@media (max-width:520px){
+  .topbar{padding:6px 10px}
+  .brand{font-size:1.25rem}
+  .search input{padding:8px 12px;font-size:.8rem}
+  .btn{padding:7px 9px;font-size:.65rem}
+  .view-toggle{font-size:.9rem;padding:7px}
+  .product-item img{width:50px;height:50px}
+  .product-item{padding:8px}
+  .counter button{padding:5px 7px}
+  .counter input{width:44px}
+  .product-table td.media-cell img{width:44px !important;height:44px !important}
+  .cart{width:100vw}
 }
 
-/* ------------------ Ajustes telas muito largas ------------------ */
+/* Telas largas */
 @media (min-width:1500px){
   .container{max-width:1400px}
   .search{max-width:760px}
   .product-item{grid-template-columns:76px 1fr 300px}
   .product-item img{width:76px;height:76px}
 }
-
-/* =========================================================
-   FIM DO ARQUIVO
-   ========================================================= */

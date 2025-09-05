@@ -3,11 +3,11 @@
   <head>
     <meta charset="utf-8" />
     <title>Loja Online - Home (Tabela)</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body data-page="home-tabela">
-    <header class="topbar">
+    <header class="topbar fixed">
       <a class="brand" href="home-tabela.html">KB Store</a>
 
       <form id="searchForm" class="search" role="search" aria-label="Buscar produtos">
@@ -15,7 +15,12 @@
       </form>
 
       <nav class="actions">
-        <a href="home.html" class="btn outline" id="viewToggleBtn" aria-label="Alternar para visualização em lista">Lista</a>
+        <a href="home.html"
+           class="btn outline view-toggle"
+           id="viewToggleBtn"
+           aria-label="Ver em lista"
+           title="Ver em lista"
+           data-icon="lista">☰</a>
         <button id="themeToggle" class="btn outline" aria-label="Alternar tema">🌓</button>
         <button id="openCartBtn" class="btn icon" aria-label="Abrir carrinho">
           🛒 <span id="cartCount" class="badge">0</span>
@@ -58,7 +63,7 @@
     <aside id="cartAside" class="cart" aria-hidden="true" aria-label="Carrinho de compras">
       <header class="cart-header">
         <h2>Seu Carrinho</h2>
-        <button id="closeCartBtn" class="btn icon" aria-label="Sair do carrinho">✕</button>
+        <button id="closeCartBtn" class="btn icon" title="Sair do carrinho" aria-label="Sair do carrinho">✕</button>
       </header>
       <section id="cartItems" class="cart-items"></section>
       <footer class="cart-footer">
@@ -79,6 +84,6 @@
       </footer>
     </aside>
 
-    <script src="app.js?v=1.0.3"></script>
+    <script src="app.js"></script>
   </body>
 </html>
