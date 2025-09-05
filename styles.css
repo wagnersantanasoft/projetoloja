@@ -1,3 +1,17 @@
+/* =========================================================
+   STYLES.CSS (versão consolidada)
+   - Tema dark/light
+   - Login
+   - Layout topo (grid só em home / home-tabela)
+   - Busca central sem botão
+   - Categorias como botões
+   - Catálogo (lista e tabela)
+   - Produto (detalhe)
+   - Carrinho
+   - Responsividade
+   ========================================================= */
+
+/* ------------------ Variáveis de Tema ------------------ */
 :root{
   --bg:#0f172a;
   --card:#111827;
@@ -13,7 +27,6 @@
   --radius-sm:8px;
 }
 
-/* Tema claro */
 html[data-theme="light"]{
   --bg:#f5f7fb;
   --card:#ffffff;
@@ -27,261 +40,534 @@ html[data-theme="light"]{
   --shadow:0 8px 24px rgba(0,0,0,.08);
 }
 
+/* ------------------ Reset básico ------------------ */
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
   margin:0;
   font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica,Arial;
   color:var(--text);
-  background:
-    linear-gradient(180deg, color-mix(in oklab, var(--bg), black 5%), var(--bg) 35%, color-mix(in oklab, var(--bg), black 5%) 100%);
+  background:linear-gradient(180deg,
+    color-mix(in oklab,var(--bg),black 5%),
+    var(--bg) 35%,
+    color-mix(in oklab,var(--bg),black 5%) 100%);
+  -webkit-font-smoothing:antialiased;
 }
 
 .hidden{display:none !important}
 .link{color:var(--accent);text-decoration:underline}
+.link:hover{text-decoration:underline}
 .spacer{flex:1}
 
-/* Login */
-.login-card{max-width:420px;margin:8vh auto}
-.form{display:flex;flex-direction:column;gap:14px}
-label{display:flex;flex-direction:column;gap:6px;font-size:.95rem}
-input, select{
-  padding:12px 14px;border:1px solid var(--border);
-  background:color-mix(in oklab, var(--card), black 8%);color:var(--text);border-radius:var(--radius-sm);
-  outline:2px solid transparent;outline-offset:1px;transition:border-color .2s, outline-color .2s;
-}
-input:focus, select:focus{border-color:var(--accent);outline-color:color-mix(in oklab, var(--accent), transparent 65%)}
-.password-field{display:flex;gap:8px;align-items:stretch}
-.password-field input{flex:1}
-
-
-/* Topbar com auto-hide ao rolar */
-.topbar{
-  position:sticky;top:0;z-index:10;
-  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
-  padding:12px 16px;border-bottom:1px solid var(--border);
-  background:color-mix(in oklab, var(--bg), black 5%);backdrop-filter:saturate(1.2) blur(8px);
-  transition:transform .2s ease;
-}
-.topbar.is-hidden{transform:translateY(-100%)}
-html[data-theme="light"] .topbar{background:color-mix(in oklab, var(--bg), white 10%)}
-.brand{color:var(--text);text-decoration:none;font-weight:800}
-.page-title{margin:0;font-size:1.1rem}
-
-.container{max-width:1100px;margin:0 auto;padding:18px}
-
-/* Busca centralizada */
-.search{
-  display:flex;gap:8px;justify-content:center;
-  order:2;flex-basis:100%;
-  max-width:720px;margin:6px auto 0;
-}
-
-.search input{
-  position: fixed; /* ou absolute se preferir */
-  top: 30%; left: 50%;
-  width: 100%; max-width:720px;
-  transform: translate(-50%, -50%);
-  padding:10px 12px;border:1px solid var(--border);
-  background:color-mix(in oklab, var(--card), black 8%);color:var(--text);border-radius:10px;
-}
-.actions{display:flex;gap:8px;align-items:center}
-
-/* Barra de categorias em botões (abaixo da busca) */
-.categories{
-  order:3;flex-basis:100%;
-  display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:6px;
-}
-.cat-btn{border-color:color-mix(in oklab, var(--accent), transparent 60%)}
-.cat-btn.active{
-  color:var(--text);
-  background:color-mix(in oklab, var(--accent), transparent 88%);
-  border-color:color-mix(in oklab, var(--accent), transparent 30%);
-}
-
-/* Botões */
+/* ------------------ Componentes comuns ------------------ */
 .btn{
-  appearance:none;border:1px solid transparent;border-radius:10px;padding:10px 14px;
-  font-weight:600;color:color-mix(in oklab, var(--text), black 30%);background:color-mix(in oklab, var(--card), white 40%);cursor:pointer;
-  transition:transform .02s ease, filter .15s ease, background .2s, border-color .2s, color .2s;
-  border-color:var(--border);
+  appearance:none;
+  border:1px solid var(--border);
+  background:color-mix(in oklab,var(--card),white 40%);
+  color:color-mix(in oklab,var(--text),black 30%);
+  font-weight:600;
+  border-radius:10px;
+  padding:10px 14px;
+  cursor:pointer;
+  font-size:.9rem;
+  transition:
+    background .25s,
+    color .25s,
+    border-color .25s,
+    filter .25s,
+    transform .08s;
 }
 .btn:hover{filter:brightness(1.05)}
 .btn:active{transform:translateY(1px)}
-.btn.primary{background:linear-gradient(180deg,var(--primary),var(--primary-600));color:white;border-color:transparent}
-.btn.outline{background:transparent;border-color:var(--border);color:var(--text)}
-.btn.icon{display:inline-flex;gap:8px;align-items:center;justify-content:center;min-width:44px}
-.btn.small{padding:8px 10px;font-size:.9rem}
-.btn.danger{background:transparent;border-color:var(--danger);color:#f01414}
+.btn.primary{
+  background:linear-gradient(180deg,var(--primary),var(--primary-600));
+  border-color:transparent;
+  color:#fff;
+}
+.btn.outline{
+  background:transparent;
+  color:var(--text);
+}
+.btn.danger{
+  background:transparent;
+  border-color:var(--danger);
+  color:#f01414;
+}
+.btn.icon{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:44px}
+.btn.small{padding:8px 10px;font-size:.75rem}
 .full{width:100%}
 
 .badge{
   display:inline-grid;place-items:center;
-  min-width:20px;height:20px;border-radius:999px;padding:0 6px;margin-left:6px;
-  font-size:.75rem;color:white;background:#ef4444;
+  min-width:20px;height:20px;
+  padding:0 6px;
+  border-radius:999px;
+  background:#ef4444;
+  color:#fff;
+  font-size:.7rem;
+  font-weight:600;
 }
 
 .muted{color:var(--muted)}
-.error{color:#fecaca;background:#7f1d1d;padding:10px 12px;border-radius:8px;border:1px solid var(--danger)}
-html[data-theme="light"] .error{color:#7f1d1d;background:#fee2e2;border-color:#f01414}
+.error{
+  color:#fecaca;
+  background:#7f1d1d;
+  padding:10px 12px;
+  border-radius:8px;
+  border:1px solid var(--danger);
+  font-size:.8rem;
+}
+html[data-theme="light"] .error{
+  color:#7f1d1d;
+  background:#fee2e2;
+  border-color:#f01414;
+}
 
-/* Indicador "no carrinho" */
 .in-cart-badge{
   display:inline-flex;align-items:center;gap:6px;
-  padding:4px 10px;border-radius:999px;font-weight:700;font-size:.8rem;
+  padding:4px 10px;
+  border-radius:999px;
+  font-weight:700;
+  font-size:.7rem;
+  background:color-mix(in oklab,var(--primary),transparent 82%);
+  border:1px solid color-mix(in oklab,var(--primary-600),transparent 50%);
   color:var(--text);
-  background:color-mix(in oklab, var(--primary), transparent 82%);
-  border:1px solid color-mix(in oklab, var(--primary-600), transparent 50%);
 }
 
-/* Lista (home) */
+/* ------------------ Topbar básica ------------------ */
+.topbar{
+  position:sticky;top:0;z-index:10;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;
+  padding:12px 16px;
+  background:color-mix(in oklab,var(--bg),black 5%);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:saturate(1.2) blur(8px);
+  transition:transform .25s ease;
+}
+.topbar.is-hidden{transform:translateY(-100%)}
+html[data-theme="light"] .topbar{
+  background:color-mix(in oklab,var(--bg),white 10%);
+}
+
+.brand{
+  font-weight:800;
+  text-decoration:none;
+  color:var(--text);
+  font-size:1.35rem;
+  letter-spacing:.5px;
+  white-space:nowrap;
+}
+
+.page-title{margin:0;font-size:1.1rem}
+.actions{display:flex;gap:8px;align-items:center}
+
+/* Grid especial só nas páginas de catálogo (centraliza busca) */
+body[data-page="home"] .topbar,
+body[data-page="home-tabela"] .topbar{
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  align-items:center;
+  row-gap:8px;
+}
+
+/* ------------------ Busca central ------------------ */
+.search{
+  grid-column:2;
+  display:flex;
+  width:100%;
+  max-width:680px;
+  margin:0 auto;
+  position:relative;
+}
+.search input{
+  width:100%;
+  padding:12px 16px;
+  border:1px solid var(--border);
+  background:color-mix(in oklab,var(--card),black 8%);
+  color:var(--text);
+  border-radius:40px;
+  font-size:1rem;
+  outline:2px solid transparent;
+  outline-offset:2px;
+  transition:border-color .25s, box-shadow .25s, background .3s;
+}
+.search input:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 4px color-mix(in oklab,var(--accent),transparent 75%);
+}
+
+/* ------------------ Botões de categorias ------------------ */
+.categories{
+  grid-column:1 / -1;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:8px;
+  padding-top:4px;
+}
+.cat-btn{
+  border:1px solid color-mix(in oklab,var(--accent),transparent 65%);
+  background:color-mix(in oklab,var(--card),black 4%);
+  font-size:.7rem;
+  letter-spacing:.3px;
+  text-transform:uppercase;
+  font-weight:600;
+}
+.cat-btn.active{
+  background:color-mix(in oklab,var(--accent),transparent 82%);
+  border-color:color-mix(in oklab,var(--accent),transparent 30%);
+  color:var(--text);
+}
+
+/* ------------------ Container principal ------------------ */
+.container{
+  max-width:1100px;
+  margin:0 auto;
+  padding:18px;
+}
+
+/* ------------------ Login ------------------ */
+.login-card{
+  max-width:420px;
+  margin:8vh auto;
+}
+.form{display:flex;flex-direction:column;gap:14px}
+label{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  font-size:.95rem;
+  font-weight:500;
+  letter-spacing:.2px;
+}
+input,select{
+  padding:12px 14px;
+  border:1px solid var(--border);
+  background:color-mix(in oklab,var(--card),black 8%);
+  color:var(--text);
+  border-radius:var(--radius-sm);
+  outline:2px solid transparent;
+  outline-offset:1px;
+  transition:border-color .25s, outline-color .25s, background .3s;
+  font-size:.95rem;
+}
+input:focus,select:focus{
+  border-color:var(--accent);
+  outline-color:color-mix(in oklab,var(--accent),transparent 70%);
+}
+.password-field{display:flex;gap:8px;align-items:stretch}
+.password-field input{flex:1}
+
+/* ------------------ Lista de produtos ------------------ */
 .product-list{
-  list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:10px;
+  list-style:none;
+  margin:16px 0 0;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
 }
 .product-item{
-  display:grid;grid-template-columns:64px 1fr 260px;gap:12px;align-items:center;
-  background:radial-gradient(600px 200px at -20% -20%, color-mix(in oklab, var(--accent), transparent 93%)), var(--card);
-  border:1px solid var(--border);border-radius:12px;padding:10px;box-shadow:var(--shadow)
+  display:grid;
+  grid-template-columns:64px 1fr 260px;
+  gap:12px;
+  align-items:center;
+  background:radial-gradient(600px 200px at -20% -20%, color-mix(in oklab,var(--accent),transparent 93%)), var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:10px;
+  box-shadow:var(--shadow);
 }
-.product-item img{width:64px;height:64px;border-radius:8px;object-fit:cover}
-.product-item .info .name{font-weight:800}
-.product-item .desc-link{color:var(--accent);text-decoration:underline}
+.product-item img{
+  width:64px;height:64px;
+  border-radius:8px;
+  object-fit:cover;
+}
+.product-item .info .name{
+  font-weight:800;
+  font-size:.95rem;
+}
+.product-item .desc-link{
+  color:var(--accent);
+  text-decoration:underline;
+  font-size:.75rem;
+}
 .product-item .desc-link:hover{text-decoration:underline}
 
-/* Coluna direita da lista */
-.list-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
-.list-right .price{font-weight:900}
-.list-right .line-total{font-weight:700}
-.list-right .add{min-width:150px}
+.list-right{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:8px;
+}
+.list-right .price{font-weight:900;font-size:.95rem}
+.list-right .line-total{font-weight:600;font-size:.75rem}
+.list-right .add{min-width:140px}
 
-/* Agrupa stepper + botão */
-.inline-actions{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.inline-actions{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  align-items:flex-end;
+}
 
-/* Stepper de quantidade */
+/* ------------------ Stepper de quantidade ------------------ */
 .counter{
-  display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:color-mix(in oklab, var(--card), black 8%);
-}
-.counter button{background:transparent;color:var(--text);border:0;padding:6px 10px;cursor:pointer}
-.counter input{width:56px;text-align:center;border:0;background:transparent;color:var(--text);padding:6px 4px}
-
-/* Detalhe */
-.product-detail{
-  display:grid;grid-template-columns:minmax(240px,420px) 1fr;gap:18px;
-}
-@media (max-width:800px){.product-detail{grid-template-columns:1fr}}
-.card{
-  background:radial-gradient(1200px 400px at -10% -10%, color-mix(in oklab, var(--accent), transparent 92%)) , var(--card);
+  display:inline-flex;
+  align-items:center;
   border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:16px;box-shadow:var(--shadow)
+  border-radius:8px;
+  overflow:hidden;
+  background:color-mix(in oklab,var(--card),black 8%);
 }
-.pd-media{aspect-ratio:16/10;background:color-mix(in oklab, var(--card), black 8%);border-radius:12px;overflow:hidden}
-.pd-media img{width:100%;height:100%;object-fit:cover}
-.pd-title{margin:0 0 6px}
-.pd-meta{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;font-size:.9rem;color:var(--muted)}
-.pd-meta div{background:color-mix(in oklab, var(--card), black 8%);border:1px solid var(--border);padding:6px 8px;border-radius:8px}
-.pd-price{font-size:1.3rem;font-weight:900;margin:8px 0}
-.pd-actions{display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap}
-.pd-total{font-weight:800;min-width:160px}
-
-/* Carrinho */
-.overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(2px);
-  opacity:0;pointer-events:none;transition:opacity .2s;z-index:20;
+.counter button{
+  background:transparent;
+  color:var(--text);
+  border:0;
+  padding:6px 10px;
+  font-size:.9rem;
+  cursor:pointer;
 }
-.overlay.show{opacity:1;pointer-events:auto}
-
-.cart{
-  position:fixed;top:0;right:0;height:100%;width:460px;max-width:95vw;
-  background:var(--card);border-left:1px solid var(--border);
-  transform:translateX(100%);transition:transform .25s ease-out;z-index:30;display:flex;flex-direction:column;
+.counter input{
+  width:56px;
+  text-align:center;
+  border:0;
+  background:transparent;
+  color:var(--text);
+  padding:6px 4px;
+  font-size:.85rem;
 }
-.cart.show{transform:translateX(0)}
-.cart-header{
-  display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);
-}
-.cart-items{flex:1;overflow:auto;padding:12px 12px 4px;display:flex;flex-direction:column;gap:10px}
-.cart-item{
-  display:grid;grid-template-columns:56px 1fr 160px;gap:10px;align-items:center;
-  background:color-mix(in oklab, var(--card), black 8%);border:1px solid var(--border);border-radius:12px;padding:8px;
-}
-.cart-item img{width:56px;height:56px;border-radius:8px;object-fit:cover}
-.cart-item .info{display:flex;flex-direction:column;gap:2px}
-.cart-item .title{font-size:.95rem}
-.cart-item .line{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:.85rem}
 
-/* Controles do carrinho */
-.cart-item .controls{
-  display:flex;flex-direction:column;gap:8px;align-items:stretch;
-}
-.cart-item .controls .counter{align-self:stretch;justify-content:space-between}
-.remove{color:#f01414;border:1px solid var(--danger);background:transparent;border-radius:8px;padding:8px 10px;cursor:pointer}
-
-.cart-footer{padding:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:10px;background:color-mix(in oklab, var(--card), black 4%)}
-.counts{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:.95rem}
-.counts .sep{opacity:.6}
-.totals{display:flex;align-items:center;justify-content:space-between;font-size:1.05rem}
-.cart-actions{display:flex;flex-direction:column;gap:8px}
-
-/* ========================= */
-/*     Tabela (home-tabela)  */
-/* ========================= */
-
-.table-card{overflow:auto}
+/* ------------------ Tabela (home-tabela) ------------------ */
+.table-card{overflow:auto;margin-top:18px}
 .product-table-wrap{min-width:720px}
 .product-table{
   width:100%;
   border-collapse:collapse;
-  table-layout:auto;
 }
 .product-table thead th{
-  text-align:left;font-weight:800;color:var(--text);
-  background:color-mix(in oklab, var(--card), black 6%);
+  text-align:left;
+  font-weight:800;
+  color:var(--text);
+  background:color-mix(in oklab,var(--card),black 6%);
   border-bottom:1px solid var(--border);
+  font-size:.75rem;
+  letter-spacing:.5px;
+  padding:10px 12px;
 }
-.product-table th,
 .product-table td{
   padding:10px 12px;
   border-bottom:1px solid var(--border);
   vertical-align:middle;
+  font-size:.7rem;
 }
-.product-table th:first-child,
-.product-table td:first-child{ /* coluna da imagem */
-  width:72px;
-}
-.product-table th:last-child,
-.product-table td:last-child{ /* coluna ações */
-  width:200px;
-}
-
-/* Imagem pequena e fixa (override forte para evitar ficar gigante) */
-.product-table td.media-cell > img{
-  width:56px !important;
-  height:56px !important;
-  border-radius:8px;
+.product-table td.media-cell img{
+  width:56px;
+  height:56px;
   object-fit:cover;
+  border-radius:8px;
   display:block;
 }
 .nowrap{white-space:nowrap}
-.table-actions{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
-.table-actions .add{min-width:150px}
+.table-actions{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  align-items:flex-end;
+}
+.table-actions .add{min-width:140px;font-size:.7rem}
 .table-actions .in-cart-badge{align-self:flex-end}
 
-/* ========================= */
-/*      Quebras de layout    */
-/* ========================= */
+/* ------------------ Cartão genérico ------------------ */
+.card{
+  background:radial-gradient(1200px 400px at -10% -10%, color-mix(in oklab,var(--accent),transparent 92%)), var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:16px;
+  box-shadow:var(--shadow);
+}
 
-@media (max-width: 1024px){
+/* ------------------ Página de detalhe ------------------ */
+.product-detail{
+  display:grid;
+  grid-template-columns:minmax(240px,420px) 1fr;
+  gap:18px;
+}
+@media (max-width:800px){
+  .product-detail{grid-template-columns:1fr}
+}
+.pd-media{
+  aspect-ratio:16/10;
+  background:color-mix(in oklab,var(--card),black 8%);
+  border-radius:12px;
+  overflow:hidden;
+}
+.pd-media img{width:100%;height:100%;object-fit:cover}
+.pd-title{margin:0 0 6px}
+.pd-meta{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+  font-size:.8rem;
+  color:var(--muted);
+  margin-top:12px;
+}
+.pd-meta div{
+  background:color-mix(in oklab,var(--card),black 8%);
+  border:1px solid var(--border);
+  padding:6px 8px;
+  border-radius:8px;
+}
+.pd-price{
+  font-size:1.25rem;
+  font-weight:900;
+  margin:8px 0 4px;
+}
+.pd-total{
+  font-weight:800;
+  min-width:160px;
+  font-size:.85rem;
+}
+.pd-actions{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  margin-top:12px;
+  flex-wrap:wrap;
+}
+
+/* ------------------ Carrinho (overlay lateral) ------------------ */
+.overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.5);
+  backdrop-filter:blur(2px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s;
+  z-index:20;
+}
+.overlay.show{opacity:1;pointer-events:auto}
+
+.cart{
+  position:fixed;
+  top:0;right:0;
+  height:100%;
+  width:460px;
+  max-width:95vw;
+  background:var(--card);
+  border-left:1px solid var(--border);
+  transform:translateX(100%);
+  transition:transform .25s ease-out;
+  z-index:30;
+  display:flex;
+  flex-direction:column;
+}
+.cart.show{transform:translateX(0)}
+
+.cart-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 16px;
+  border-bottom:1px solid var(--border);
+}
+.cart-items{
+  flex:1;
+  overflow:auto;
+  padding:12px 12px 4px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.cart-item{
+  display:grid;
+  grid-template-columns:56px 1fr 160px;
+  gap:10px;
+  align-items:center;
+  background:color-mix(in oklab,var(--card),black 8%);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:8px;
+}
+.cart-item img{
+  width:56px;height:56px;
+  border-radius:8px;
+  object-fit:cover;
+}
+.cart-item .info{display:flex;flex-direction:column;gap:2px}
+.cart-item .title{font-size:.8rem;font-weight:600}
+.cart-item .line{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  color:var(--muted);
+  font-size:.65rem;
+}
+
+.cart-item .controls{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  align-items:stretch;
+}
+.cart-item .controls .counter{justify-content:space-between}
+.remove{
+  color:#f01414;
+  border:1px solid var(--danger);
+  background:transparent;
+  border-radius:8px;
+  padding:8px 10px;
+  cursor:pointer;
+  font-size:.65rem;
+}
+
+.cart-footer{
+  padding:12px;
+  border-top:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  background:color-mix(in oklab,var(--card),black 4%);
+}
+.counts{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  color:var(--muted);
+  font-size:.7rem;
+  font-weight:500;
+}
+.counts .sep{opacity:.6}
+.totals{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-size:.9rem;
+  font-weight:600;
+}
+.cart-actions{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+/* ------------------ Responsividade ------------------ */
+@media (max-width:1024px){
   .product-item{grid-template-columns:56px 1fr 220px}
   .cart{width:420px;max-width:92vw}
 }
 
-@media (max-width: 768px){
-  .brand{font-size:2rem}
-  .actions{order:1}
-  .categories{order:3}
-  .search{order:2;flex-basis:100%;max-width:none}
-  .search input{width:100%}
+@media (max-width:768px){
+  /* Topbar vira uma coluna nas páginas de catálogo */
+  body[data-page="home"] .topbar,
+  body[data-page="home-tabela"] .topbar{
+    grid-template-columns:1fr;
+  }
+  .brand{justify-self:center;font-size:2rem}
+  .actions{justify-self:center;flex-wrap:wrap}
+  .search{grid-column:1;max-width:100%;width:100%}
+  .categories{margin-top:0}
 
   .product-item{
     grid-template-columns:56px 1fr;
@@ -296,26 +582,30 @@ html[data-theme="light"] .error{color:#7f1d1d;background:#fee2e2;border-color:#f
   .inline-actions .counter{flex:1}
   .inline-actions .add{flex:1}
 
-  .table-actions{align-items:stretch}
   .cart{width:100vw;max-width:100vw}
   .cart-header{position:sticky;top:0;background:inherit;z-index:1}
   .cart-footer{position:sticky;bottom:0;background:inherit;z-index:1;padding-bottom:calc(12px + env(safe-area-inset-bottom))}
   .cart-items{padding-bottom:160px}
 
-  .pd-actions{flex-wrap:nowrap}
+  .table-actions{align-items:stretch}
+  .product-table-wrap{min-width:640px}
 }
 
-@media (max-width: 480px){
+@media (max-width:480px){
   .container{padding:14px}
-  .btn{padding:12px 14px;font-size:1rem}
+  .btn{padding:12px 14px;font-size:.95rem}
   .btn.icon{min-width:40px}
-  .badge{min-width:18px;height:18px;font-size:.7rem}
+  .badge{min-width:18px;height:18px;font-size:.6rem}
 
   .product-item{grid-template-columns:1fr}
   .product-item img{width:72px;height:72px}
-  .product-item .info{display:grid;grid-template-columns:72px 1fr;gap:12px}
+  .product-item .info{
+    display:grid;
+    grid-template-columns:72px 1fr;
+    gap:12px;
+  }
   .product-item .info .name{grid-column:1/-1}
-  .product-item .desc-link{grid-column:1/-1}
+  .product-item .desc-link{grid-column:1/-1;font-size:.7rem}
 
   .product-item .list-right{text-align:right}
   .counter button{padding:10px;min-width:40px}
@@ -326,10 +616,27 @@ html[data-theme="light"] .error{color:#7f1d1d;background:#fee2e2;border-color:#f
   .pd-actions .btn{flex:1}
 
   .cart-item{grid-template-columns:56px 1fr}
-  .cart-item .controls{grid-column:1/-1;flex-direction:row;align-items:center;gap:10px}
+  .cart-item .controls{
+    grid-column:1/-1;
+    flex-direction:row;
+    align-items:center;
+    gap:10px;
+  }
   .cart-item .controls .counter{flex:1}
-  .remove{width:120px;text-align:center}
+  .remove{width:110px;text-align:center}
 
-  /* imagem ainda menor no mobile estreito */
-  .product-table td.media-cell > img{width:44px !important;height:44px !important}
+  .product-table td.media-cell img{width:48px;height:48px}
+  .search input{padding:12px 16px;font-size:.95rem}
 }
+
+/* ------------------ Ajustes telas muito largas ------------------ */
+@media (min-width:1500px){
+  .container{max-width:1400px}
+  .search{max-width:760px}
+  .product-item{grid-template-columns:76px 1fr 300px}
+  .product-item img{width:76px;height:76px}
+}
+
+/* =========================================================
+   FIM DO ARQUIVO
+   ========================================================= */

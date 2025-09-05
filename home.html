@@ -10,20 +10,9 @@
     <header class="topbar">
       <a class="brand" href="home.html">KB Store</a>
 
-      <form id="searchForm" class="search" role="search">
-        <input id="searchInput" type="search" placeholder="Buscar produtos..." aria-label="Buscar produtos" />
-        <!--<button class="btn" type="submit">Buscar</button> -->
+      <form id="searchForm" class="search" role="search" aria-label="Buscar produtos">
+        <input id="searchInput" type="search" placeholder="Buscar produtos..." aria-label="Digite para buscar" autocomplete="off" />
       </form>
-
-      <!-- Botões de categorias abaixo da busca -->
-      <div id="categoriesBar" class="categories" aria-label="Filtro por categoria" role="toolbar">
-        <button type="button" class="btn outline cat-btn active" data-category="Todos" aria-pressed="true">Todos</button>
-        <button type="button" class="btn outline cat-btn" data-category="Ferramentas e Equipamentos" aria-pressed="false">Ferramentas e Equipamentos</button>
-        <button type="button" class="btn outline cat-btn" data-category="Hidráulica" aria-pressed="false">Hidráulica</button>
-        <button type="button" class="btn outline cat-btn" data-category="Elétrica" aria-pressed="false">Elétrica</button>
-        <button type="button" class="btn outline cat-btn" data-category="Acabamento" aria-pressed="false">Acabamento</button>
-        <button type="button" class="btn outline cat-btn" data-category="Louças e Metais" aria-pressed="false">Louças e Metais</button>
-      </div>
 
       <nav class="actions">
         <a href="home-tabela.html" class="btn outline" id="viewToggleBtn" aria-label="Alternar para visualização em tabela">Tabela</a>
@@ -33,6 +22,15 @@
         </button>
         <button id="logoutBtn" class="btn outline">Sair</button>
       </nav>
+
+      <div id="categoriesBar" class="categories" aria-label="Filtro por categoria" role="toolbar">
+        <button type="button" class="btn outline cat-btn active" data-category="Todos" aria-pressed="true">Todos</button>
+        <button type="button" class="btn outline cat-btn" data-category="Ferramentas e Equipamentos" aria-pressed="false">Ferramentas e Equipamentos</button>
+        <button type="button" class="btn outline cat-btn" data-category="Hidráulica" aria-pressed="false">Hidráulica</button>
+        <button type="button" class="btn outline cat-btn" data-category="Elétrica" aria-pressed="false">Elétrica</button>
+        <button type="button" class="btn outline cat-btn" data-category="Acabamento" aria-pressed="false">Acabamento</button>
+        <button type="button" class="btn outline cat-btn" data-category="Louças e Metais" aria-pressed="false">Louças e Metais</button>
+      </div>
     </header>
 
     <main class="container">
@@ -44,7 +42,7 @@
     <aside id="cartAside" class="cart" aria-hidden="true" aria-label="Carrinho de compras">
       <header class="cart-header">
         <h2>Seu Carrinho</h2>
-        <button id="closeCartBtn" class="btn icon" title="Sair do carrinho" aria-label="Sair do carrinho">✕</button>
+        <button id="closeCartBtn" class="btn icon" aria-label="Sair do carrinho">✕</button>
       </header>
       <section id="cartItems" class="cart-items"></section>
       <footer class="cart-footer">
@@ -59,12 +57,12 @@
         </div>
         <div class="cart-actions">
           <button id="finalizeBtn" class="btn primary full">Finalizar Pedido</button>
-          <button id="clearCartBtn" class="btn danger full">Limpar Carrinho</button>
-          <button id="exitCartBtn" class="btn outline full">Sair do Carrinho</button>
+            <button id="clearCartBtn" class="btn danger full">Limpar Carrinho</button>
+            <button id="exitCartBtn" class="btn outline full">Sair do Carrinho</button>
         </div>
       </footer>
     </aside>
 
-    <script src="app.js"></script>
+    <script src="app.js?v=1.0.3"></script>
   </body>
 </html>
